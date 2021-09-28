@@ -15,7 +15,7 @@ export default class SimplebaselayerselectorControl extends M.Control {
    * @extends {M.Control}
    * @api stable
    */
-  constructor() {
+  constructor(config) {
     // 1. checks if the implementation can create PluginControl
     if (M.utils.isUndefined(SimplebaselayerselectorImplControl)) {
       M.exception('La implementación usada no puede crear controles SimplebaselayerselectorControl');
@@ -25,7 +25,13 @@ export default class SimplebaselayerselectorControl extends M.Control {
     super(impl, 'Simplebaselayerselector');
     this.template = template;
     this.templateVars = '';
+    this.config = config
 
+    if (this.config) {
+      this.displayBaseLayersInLayerSwitcher = this.config.displayBaseLayersInLayerSwitcher
+    } else {
+      this.displayBaseLayersInLayerSwitcher = true;
+    }
   }
 
   /**
@@ -37,12 +43,13 @@ export default class SimplebaselayerselectorControl extends M.Control {
    * @api stable
    */
   createView(map) {
+    //Se controla la carga inicial del mapa
+    this.map_.on(M.evt.COMPLETED, () => {
+      this.setConfig()
+    })
     //Se controla la carga o cambio de WMC
     this.map_.on(M.evt.CHANGE_WMC, () => {
-      //console.log('Ha cambiado el wmc activo.')
       this.setConfig()
-      // console.log(this.templateVars);
-      // console.log(this.baseLayers);
     })
     return new Promise((success, fail) => {
       const html = M.template.compileSync(this.template, this.templateVars);
@@ -185,23 +192,21 @@ export default class SimplebaselayerselectorControl extends M.Control {
         this.baseLayers.push(layer)
       }
     }
-    // if (this.map_.getWMC() == 0) {
-    //   console.log('no es wmc')
-    // } else {
-    //   console.log('es wmc');
-    // }
     this.selectedLayer = this.baseLayers[0];
     this.selectedLayerImg = this.selectedLayer.impl_.legendUrl_;
     this.selectedLayerLegend = this.selectedLayer.legend
     this.layerName = this.selectedLayer.name
 
-    //oculto los baseLayers del layerswitcher si el control existe
-    if (this.map_.getControls({ 'name': 'layerswitcher' }).length > 0) {
-      for (let index = 0; index < this.layers.length; index++) {
-        const element = this.layers[index];
-        element.displayInLayerSwitcher = false;
+    //oculto los baseLayers del layerswitcher si el control existe y 
+    if (this.displayBaseLayersInLayerSwitcher == false) {
+      if (this.map_.getControls({ 'name': 'layerswitcher' }).length > 0) {
+        for (let index = 0; index < this.layers.length; index++) {
+          const element = this.layers[index];
+          element.displayInLayerSwitcher = false;
+        }
       }
     }
+
     this.templateVars = { vars: { selectedLayerLegend: this.selectedLayerLegend, selectedLayerLegendURL: this.selectedLayerImg, selectedLayerName: this.layerName, layers: this.baseLayers } };
 
     this.render()
