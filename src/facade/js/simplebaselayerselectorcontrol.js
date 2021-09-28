@@ -30,7 +30,7 @@ export default class SimplebaselayerselectorControl extends M.Control {
     if (this.config) {
       this.displayBaseLayersInLayerSwitcher = this.config.displayBaseLayersInLayerSwitcher
     } else {
-      this.displayBaseLayersInLayerSwitcher = true;
+      this.displayBaseLayersInLayerSwitcher = false;
     }
   }
 
