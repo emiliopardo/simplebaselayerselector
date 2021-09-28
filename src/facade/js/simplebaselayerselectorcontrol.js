@@ -23,11 +23,9 @@ export default class SimplebaselayerselectorControl extends M.Control {
     // 2. implementation of this control
     const impl = new SimplebaselayerselectorImplControl();
     super(impl, 'Simplebaselayerselector');
+    this.template = template;
+    this.templateVars = '';
 
-    // captura de customevent lanzado desde impl con coords
-    window.addEventListener('mapclicked', (e) => {
-      this.map_.addLabel('Hola Mundo!', e.detail);
-    });
   }
 
   /**
@@ -39,31 +37,95 @@ export default class SimplebaselayerselectorControl extends M.Control {
    * @api stable
    */
   createView(map) {
-    if (!M.template.compileSync) { // JGL: retrocompatibilidad Mapea4
-      M.template.compileSync = (string, options) => {
-        let templateCompiled;
-        let templateVars = {};
-        let parseToHtml;
-        if (!M.utils.isUndefined(options)) {
-          templateVars = M.utils.extends(templateVars, options.vars);
-          parseToHtml = options.parseToHtml;
-        }
-        const templateFn = Handlebars.compile(string);
-        const htmlText = templateFn(templateVars);
-        if (parseToHtml !== false) {
-          templateCompiled = M.utils.stringToHtml(htmlText);
-        } else {
-          templateCompiled = htmlText;
-        }
-        return templateCompiled;
-      };
-    }
-    
+    //Se controla la carga o cambio de WMC
+    this.map_.on(M.evt.CHANGE_WMC, () => {
+      //console.log('Ha cambiado el wmc activo.')
+      this.setConfig()
+      // console.log(this.templateVars);
+      // console.log(this.baseLayers);
+    })
     return new Promise((success, fail) => {
-      const html = M.template.compileSync(template);
+      const html = M.template.compileSync(this.template, this.templateVars);
       // Añadir código dependiente del DOM
+      this.element = html;
+      this.addEvents(html);
       success(html);
     });
+  }
+
+  addEvents(html) {
+    this.layerSelector = html.querySelector('div#contenedor-baseLayer-layers');
+    html.addEventListener('click', () => {
+      this.layerSelector.animate([
+        { width: "0px", height: '0px', offset: 0 },
+        { width: ((this.layers.length * 76) + 10) + 'px', height: '85px', offset: 1 }
+      ], {
+        duration: 300,
+        easing: 'ease',
+        iterations: 1
+      });
+
+      setTimeout(function () {
+        this.divImagenes = document.getElementsByClassName("m-selector-baselayer-layers-content");
+        for (var i = 0; i < this.divImagenes.length; i++) {
+          this.divImagenes[i].style.display = "block";
+        }
+      }, 200);
+      this.layerSelector.style.width = ((this.layers.length * 76) + 10) + 'px';
+      this.layerSelector.style.display = 'inline-block';
+
+    })
+    NodeList.prototype.addEventListener = function (event_name, callback, useCapture) {
+      for (var i = 0; i < this.length; i++) {
+        this[i].addEventListener(event_name, callback, useCapture);
+      }
+    };
+    html.querySelectorAll('div.m-selector-baselayer-layers-content').addEventListener('mouseleave', (event) => {
+      let target = event.currentTarget;
+      target.style.border = 'solid 2px #cdcdcd';
+    });
+
+    html.querySelectorAll('div.m-selector-baselayer-layers-content').addEventListener('click', (e) => {
+      let find = false;
+      do {
+        for (let i = 0; i < this.layers.length; i++) {
+          if (this.layers[i].name == e.target.name) {
+            this.selectLayer(this.layers[i])
+            find = true;
+          }
+        }
+      } while (!find);
+    });
+
+    this.layerSelector.addEventListener('mouseover', () => {
+      this.layerSelector.style.display = 'inline-block';
+    })
+
+    this.layerSelector.addEventListener('mouseleave', () => {
+      this.divImagenes = document.getElementsByClassName("m-selector-baselayer-layers-content");
+
+      for (var i = 0; i < this.divImagenes.length; i++) {
+
+        this.divImagenes[i].style.setProperty("display", "none");
+      }
+      this.layerSelector.style.display = 'none';
+
+    })
+
+    if (this.map_.getControls({ 'name': 'scaleline' })) {
+      let scaleline = document.getElementsByClassName('m-scaleline')[0];
+      scaleline.style.left = '100px';
+      scaleline.style.bottom = '10px';
+      scaleline.style.position = 'absolute';
+      scaleline.style.background = '#ffffff';
+      scaleline.style.paddingLeft = '15px';
+      scaleline.style.paddingRight = '15px';
+      scaleline.style.paddingTop = '3px';
+      scaleline.style.paddingBottom = '3px';
+      scaleline.style.borderRadius = '15px 15px 15px 15px';
+      scaleline.style.boxShadow = '5px 5px 5px rgb(71, 71, 71)';
+      scaleline.style.opacity = '0.7';
+    }
   }
 
   /**
@@ -76,13 +138,6 @@ export default class SimplebaselayerselectorControl extends M.Control {
   activate() {
     // calls super to manage de/activation
     super.activate();
-    const div = document.createElement('div');
-    div.id = 'msgInfo';
-    div.classList.add('info');
-    div.innerHTML = 'Haz doble click sobre el mapa';
-    this.map_.getContainer().appendChild(div);
-
-    this.getImpl().activateClick(this.map_);
   }
   /**
    * This function is called on the control deactivation
@@ -94,10 +149,6 @@ export default class SimplebaselayerselectorControl extends M.Control {
   deactivate() {
     // calls super to manage de/activation
     super.deactivate();
-    const div = document.getElementById('msgInfo');
-    this.map_.getContainer().removeChild(div);
-
-    this.getImpl().deactivateClick(this.map_);
   }
   /**
    * This function gets activation button
@@ -124,4 +175,81 @@ export default class SimplebaselayerselectorControl extends M.Control {
   }
 
   // Add your own functions
+
+  setConfig() {
+    this.layers = this.map_.getBaseLayers();
+    this.baseLayers = new Array();
+    for (let index = 0; index < this.layers.length; index++) {
+      const layer = this.layers[index];
+      if (layer.impl_.transparent == false) {
+        this.baseLayers.push(layer)
+      }
+    }
+    // if (this.map_.getWMC() == 0) {
+    //   console.log('no es wmc')
+    // } else {
+    //   console.log('es wmc');
+    // }
+    this.selectedLayer = this.baseLayers[0];
+    this.selectedLayerImg = this.selectedLayer.impl_.legendUrl_;
+    this.selectedLayerLegend = this.selectedLayer.legend
+    this.layerName = this.selectedLayer.name
+
+    //oculto los baseLayers del layerswitcher si el control existe
+    if (this.map_.getControls({ 'name': 'layerswitcher' }).length > 0) {
+      for (let index = 0; index < this.layers.length; index++) {
+        const element = this.layers[index];
+        element.displayInLayerSwitcher = false;
+      }
+    }
+    this.templateVars = { vars: { selectedLayerLegend: this.selectedLayerLegend, selectedLayerLegendURL: this.selectedLayerImg, selectedLayerName: this.layerName, layers: this.baseLayers } };
+
+    this.render()
+  }
+
+  selectLayer(layer) {
+    let selectedLayer = event.target.name
+    let baseLayersImg = document.getElementById('contenedor-baseLayer-layers').querySelectorAll('img');
+    for (let index = 0; index < baseLayersImg.length; index++) {
+      const element = baseLayersImg[index];
+      if (element.name == selectedLayer) {
+        element.className = 'm-selector-baselayer-layers-image-seleccionada'
+      } else {
+        element.className = 'm-selector-baselayer-layers-image'
+      }
+    }
+    document.getElementById('selectedBaseLayer').src = layer.impl_.legendUrl_;
+    document.getElementById('selectedBaseLayer').alt = layer.legend;
+    document.getElementById('selectedBaseLayer').title = layer.legend;
+
+    for (let index = 0; index < this.baseLayers.length; index++) {
+      const baseLayer = this.baseLayers[index];
+      if (baseLayer.name == layer.name) {
+        baseLayer.setVisible(true);
+      } else {
+        baseLayer.setVisible(false);
+      }
+    }
+    if (this.map_.getControls({ 'name': 'layerswitcher' }).length > 0) {
+      this.map_.getControls({ 'name': 'layerswitcher' })[0].render();
+    }
+  }
+
+  render() {
+    const html = M.template.compileSync(this.template, this.templateVars);
+    this.element.children[0].innerHTML = html.children[0].innerHTML;
+    this.element.children[1].innerHTML = html.children[1].innerHTML;
+    //añado el listener click de los baseLayers
+    this.element.querySelectorAll('div.m-selector-baselayer-layers-content').addEventListener('click', (e) => {
+      let find = false;
+      do {
+        for (let i = 0; i < this.layers.length; i++) {
+          if (this.layers[i].name == e.target.name) {
+            this.selectLayer(this.layers[i])
+            find = true;
+          }
+        }
+      } while (!find);
+    });
+  }
 }

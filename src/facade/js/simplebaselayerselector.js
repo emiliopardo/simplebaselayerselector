@@ -49,13 +49,16 @@ export default class Simplebaselayerselector extends M.Plugin {
    * @api stable
    */
   addTo(map) {
-    this.controls_.push(new SimplebaselayerselectorControl());
+    this.control_ = new SimplebaselayerselectorControl()
+    this.controls_.push(this.control_);
     this.map_ = map;
     // panel para agregar control - no obligatorio
     this.panel_ = new M.ui.Panel('panelSimplebaselayerselector', {
-      collapsible: true,
-      position: M.ui.position.TR,
+      collapsible: false,
+      className: 'm-selector-baselayer',
+      position: M.ui.position.BL,
       collapsedButtonClass: 'g-cartografia-flecha-izquierda',
+      tooltip: 'Seleciona Capa Base'
     });
     this.panel_.addControls(this.controls_);
     map.addPanels(this.panel_);
