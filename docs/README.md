@@ -166,4 +166,4 @@ map.addPlugin(mp);
 
 ## Video Demo
 
-Para comprobar el funcionamiento de este plugin se puede descargar este [Video](https://github.com/emiliopardo/simplebaselayerselector/blob/master/docs/video/simpleBaseLayerSelector.webm?raw=true). El cual contempla la configuración y carga del plugin.
+Para comprobar el funcionamiento de este plugin se puede descargar este [Video](https://github.com/emiliopardo/simplebaselayerselector/blob/master/docs/video/simpleBaseLayerSelector.mp4?raw=true). El cual contempla la configuración y carga del plugin.
