@@ -1,3 +1,4 @@
 *
+!.gitignore
 !dist/simplebaselayerselector.ol.min.css
 !dist/simplebaselayerselector.ol.min.js
