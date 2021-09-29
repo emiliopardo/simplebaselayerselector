@@ -45,20 +45,20 @@ export default class SimplebaselayerselectorControl extends M.Control {
    * @api stable
    */
   createView(map) {
-    //Se controla la carga inicial del mapa
-    this.map_.on(M.evt.COMPLETED, () => {
-      this.setConfig()
-    })
-    //Se controla la carga o cambio de WMC
-    this.map_.on(M.evt.CHANGE_WMC, () => {
-      this.setConfig()
-    })
     return new Promise((success, fail) => {
       const html = M.template.compileSync(this.template, this.templateVars);
       // Añadir código dependiente del DOM
       this.element = html;
       this.addEvents(html);
       success(html);
+      //Se controla la carga inicial del mapa
+      this.map_.on(M.evt.COMPLETED, () => {
+        this.setConfig()
+      })
+      //Se controla la carga o cambio de WMC
+      this.map_.on(M.evt.CHANGE_WMC, () => {
+        this.setConfig()
+      })
     });
   }
 
@@ -112,13 +112,10 @@ export default class SimplebaselayerselectorControl extends M.Control {
 
     this.layerSelector.addEventListener('mouseleave', () => {
       this.divImagenes = document.getElementsByClassName("m-selector-baselayer-layers-content");
-
       for (var i = 0; i < this.divImagenes.length; i++) {
-
         this.divImagenes[i].style.setProperty("display", "none");
       }
       this.layerSelector.style.display = 'none';
-
     })
 
     if (this.map_.getControls({ 'name': 'scaleline' })) {
@@ -208,35 +205,18 @@ export default class SimplebaselayerselectorControl extends M.Control {
         }
       }
     }
-
     this.templateVars = { vars: { selectedLayerLegend: this.selectedLayerLegend, selectedLayerLegendURL: this.selectedLayerImg, selectedLayerName: this.layerName, layers: this.baseLayers } };
-
     this.render()
   }
 
   selectLayer(layer) {
-    let selectedLayer = event.target.name
-    let baseLayersImg = document.getElementById('contenedor-baseLayer-layers').querySelectorAll('img');
-    for (let index = 0; index < baseLayersImg.length; index++) {
-      const element = baseLayersImg[index];
-      if (element.name == selectedLayer) {
-        element.className = 'm-selector-baselayer-layers-image-seleccionada'
-      } else {
-        element.className = 'm-selector-baselayer-layers-image'
-      }
-    }
+    this.changeSelectedLayerStyle(event.target.name)
     document.getElementById('selectedBaseLayer').src = layer.impl_.legendUrl_;
     document.getElementById('selectedBaseLayer').alt = layer.legend;
     document.getElementById('selectedBaseLayer').title = layer.legend;
 
-    for (let index = 0; index < this.baseLayers.length; index++) {
-      const baseLayer = this.baseLayers[index];
-      if (baseLayer.name == layer.name) {
-        baseLayer.setVisible(true);
-      } else {
-        baseLayer.setVisible(false);
-      }
-    }
+    this.changeVisible(layer.name);
+
     if (this.map_.getControls({ 'name': 'layerswitcher' }).length > 0) {
       this.map_.getControls({ 'name': 'layerswitcher' })[0].render();
     }
@@ -246,6 +226,16 @@ export default class SimplebaselayerselectorControl extends M.Control {
     const html = M.template.compileSync(this.template, this.templateVars);
     this.element.children[0].innerHTML = html.children[0].innerHTML;
     this.element.children[1].innerHTML = html.children[1].innerHTML;
+
+    if (this.map_.getControls({ 'name': 'layerswitcher' }) && this.displayBaseLayersInLayerSwitcher) {
+      setTimeout(()=>{
+        let baseLayersSwitcher = document.getElementById('m-layerswitcher-panel');
+      baseLayersSwitcher.addEventListener('click', (event) => {
+        let selectedLayer = event.target
+        this.updateSelectedLayer(selectedLayer.getAttribute('data-layer-name'))
+      })
+      },200)    
+    }
     //añado el listener click de los baseLayers
     this.element.querySelectorAll('div.m-selector-baselayer-layers-content').addEventListener('click', (e) => {
       let find = false;
@@ -258,5 +248,46 @@ export default class SimplebaselayerselectorControl extends M.Control {
         }
       } while (!find);
     });
+  }
+
+  changeVisible(name) {
+    for (let index = 0; index < this.baseLayers.length; index++) {
+      const baseLayer = this.baseLayers[index];
+      if (baseLayer.name == name) {
+        baseLayer.setVisible(true);
+      } else {
+        baseLayer.setVisible(false);
+      }
+    }
+  }
+
+  changeSelectedLayerStyle(selectedLayer) {
+    let baseLayersImg = document.getElementById('contenedor-baseLayer-layers').querySelectorAll('img');
+    for (let index = 0; index < baseLayersImg.length; index++) {
+      const element = baseLayersImg[index];
+      if (element.name == selectedLayer) {
+        element.className = 'm-selector-baselayer-layers-image-seleccionada'
+      } else {
+        element.className = 'm-selector-baselayer-layers-image'
+      }
+    }
+  }
+
+  updateSelectedLayer(layerName) {
+    let find = false;
+    do {
+      for (let i = 0; i < this.layers.length; i++) {
+        if (this.layers[i].name == layerName) {
+          this.selectLayer(this.layers[i])
+          this.selectedLayer = this.layers[i];
+          find = true;
+        }
+      }
+    } while (!find);
+
+    document.getElementById('selectedBaseLayer').src = this.selectedLayer.impl_.legendUrl_;
+    document.getElementById('selectedBaseLayer').alt = this.selectedLayer.legend;
+    document.getElementById('selectedBaseLayer').title = this.selectedLayer.legend;
+    this.changeSelectedLayerStyle(layerName)
   }
 }
