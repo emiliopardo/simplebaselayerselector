@@ -129,6 +129,10 @@
     const mp = new M.plugin.Simplebaselayerselector();
 
     map.addPlugin(mp);
+    
+    mp.on(M.evt.ADDED_TO_MAP, ()=>{
+  console.log('se cargo el plugin')
+})
 
 </script>
 </html>
