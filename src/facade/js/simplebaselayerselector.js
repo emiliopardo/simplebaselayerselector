@@ -63,6 +63,10 @@ export default class Simplebaselayerselector extends M.Plugin {
     });
     this.panel_.addControls(this.controls_);
     map.addPanels(this.panel_);
+
+    this.control_.on(M.evt.ADDED_TO_MAP, () => {
+      this.fire(M.evt.ADDED_TO_MAP);
+    });
   }
 
   /**

@@ -106,3 +106,7 @@ map.addControls(['ScaleLine', 'Scale', 'Mouse', 'panzoombar', 'layerSwitcher']);
 const mp = new Simplebaselayerselector();
 
 map.addPlugin(mp);
+
+mp.on(M.evt.ADDED_TO_MAP, ()=>{
+  console.log('se cargo el plugin')
+})
