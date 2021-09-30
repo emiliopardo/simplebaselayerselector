@@ -1,26 +1,32 @@
 {
   "url": {
-    "name": "Simplebaselayerselector",
+    "name": "Simplelegend",
     "separator": "*"
   },
-  "constructor": "M.plugin.Simplebaselayerselector",
-  "parameters": [],
+  "constructor": "M.plugin.Simplelegend",
+  "parameters": [{
+    "type": "object",
+    "properties": [{
+      "title": "[String] texto a mostrar en el titulo de panel",
+      "draggable": "[Boolean] true o false para hacer draggable la leyenda",
+      "layers": "[Array] listado de layers de Mapea a mostrar en la leyenda"
+    }],
   "files": {
     "ol": {
-      "scripts": ["simplebaselayerselector.ol.min.js"],
-      "styles": ["simplebaselayerselector.ol.min.css"]
+      "scripts": ["simplelegend.ol.min.js"],
+      "styles": ["simplelegend.ol.min.css"]
     }
   },
   "metadata": {
     "uuid_plugin": "",
     "uuid_version_plugin": "",
     "version_ficha_metadatos": "",
-    "name": "Simplebaselayerselector",
-    "description": "Selector de Capas Base",
-    "text": "Permite seleccionar capas base de una manera simple sin layerSwitcher",
+    "name": "Simplelegend",
+    "description": "Muestra una leyenda simple",
+    "text": "Muestra una leyenda simple de los layers de Mapea tanto Raster como Vectoriales. Se puede actualizar en tiempo de ejecución y permite la posibilidad de que la leyenda sea draggable",
     "version": "1.0.0",
     "date": "Septiembre, 2021",
-    "author": "Emilio Pardo, Enrique Monreal",
+    "author": "Emilio Pardo",
     "org": "",
     "tags": "mapea,plugin",
     "icon": "./facade/assets/icons/icons.svg",
