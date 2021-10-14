@@ -64,27 +64,6 @@ export default class SimplebaselayerselectorControl extends M.Control {
 
   addEvents(html) {
     this.layerSelector = html.querySelector('div#contenedor-baseLayer-layers');
-    // html.addEventListener('click', () => {
-    //   this.layerSelector.animate([
-    //     { width: "0px", height: '0px', offset: 0 },
-    //     { width: ((this.layers.length * 76) + 10) + 'px', height: '85px', offset: 1 }
-    //   ], {
-    //     duration: 300,
-    //     easing: 'ease',
-    //     iterations: 1
-    //   });
-
-    //   setTimeout(function () {
-    //     this.divImagenes = document.getElementsByClassName("m-selector-baselayer-layers-content");
-    //     for (var i = 0; i < this.divImagenes.length; i++) {
-    //       this.divImagenes[i].style.display = "block";
-    //     }
-    //   }, 200);
-    //   this.layerSelector.style.width = ((this.layers.length * 76) + 10) + 'px';
-    //   this.layerSelector.style.display = 'inline-block';
-
-    // })
-
     html.addEventListener('click', () => {
       if (this.layerSelector.style.display != 'inline-block') {
         this.layerSelector.animate([
