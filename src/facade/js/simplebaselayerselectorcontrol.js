@@ -64,25 +64,68 @@ export default class SimplebaselayerselectorControl extends M.Control {
 
   addEvents(html) {
     this.layerSelector = html.querySelector('div#contenedor-baseLayer-layers');
+    // html.addEventListener('click', () => {
+    //   this.layerSelector.animate([
+    //     { width: "0px", height: '0px', offset: 0 },
+    //     { width: ((this.layers.length * 76) + 10) + 'px', height: '85px', offset: 1 }
+    //   ], {
+    //     duration: 300,
+    //     easing: 'ease',
+    //     iterations: 1
+    //   });
+
+    //   setTimeout(function () {
+    //     this.divImagenes = document.getElementsByClassName("m-selector-baselayer-layers-content");
+    //     for (var i = 0; i < this.divImagenes.length; i++) {
+    //       this.divImagenes[i].style.display = "block";
+    //     }
+    //   }, 200);
+    //   this.layerSelector.style.width = ((this.layers.length * 76) + 10) + 'px';
+    //   this.layerSelector.style.display = 'inline-block';
+
+    // })
+
     html.addEventListener('click', () => {
-      this.layerSelector.animate([
-        { width: "0px", height: '0px', offset: 0 },
-        { width: ((this.layers.length * 76) + 10) + 'px', height: '85px', offset: 1 }
-      ], {
-        duration: 300,
-        easing: 'ease',
-        iterations: 1
-      });
+      if (this.layerSelector.style.display != 'inline-block') {
+        this.layerSelector.animate([
+          { width: "0px", height: '0px', offset: 0 },
+          { width: ((this.layers.length * 76) + 10) + 'px', height: '85px', offset: 1 }
+        ], {
+          duration: 300,
+          easing: 'ease',
+          iterations: 1
+        });
 
-      setTimeout(function () {
-        this.divImagenes = document.getElementsByClassName("m-selector-baselayer-layers-content");
-        for (var i = 0; i < this.divImagenes.length; i++) {
-          this.divImagenes[i].style.display = "block";
-        }
-      }, 200);
-      this.layerSelector.style.width = ((this.layers.length * 76) + 10) + 'px';
-      this.layerSelector.style.display = 'inline-block';
+        setTimeout(function () {
+          this.divImagenes = document.getElementsByClassName("m-selector-baselayer-layers-content");
+          for (var i = 0; i < this.divImagenes.length; i++) {
+            this.divImagenes[i].style.display = "block";
+          }
+        }, 200);
+        this.layerSelector.style.width = ((this.layers.length * 76) + 10) + 'px';
+        this.layerSelector.style.display = 'inline-block';
 
+
+      } else {
+        this.layerSelector.animate([
+          { width: ((this.layers.length * 76) + 10) + 'px', height: '85px', offset: 0 },
+          { width: "0px", height: '0px', offset: 1 }
+        ], {
+          duration: 300,
+          easing: 'ease',
+          iterations: 1
+        });
+        setTimeout(function () {
+          this.layerSelector = html.querySelector('div#contenedor-baseLayer-layers');
+          this.divImagenes = document.getElementsByClassName("m-selector-baselayer-layers-content");
+          for (var i = 0; i < this.divImagenes.length; i++) {
+            this.divImagenes[i].style.display = "none";
+          }
+          this.layerSelector.style.width = '0px';
+          this.layerSelector.style.display = 'none';
+        }, 200);
+
+      }
     })
     NodeList.prototype.addEventListener = function (event_name, callback, useCapture) {
       for (var i = 0; i < this.length; i++) {
@@ -220,13 +263,13 @@ export default class SimplebaselayerselectorControl extends M.Control {
     this.element.children[1].innerHTML = html.children[1].innerHTML;
 
     if (this.map_.getControls({ 'name': 'layerswitcher' }) && this.displayBaseLayersInLayerSwitcher) {
-      setTimeout(()=>{
+      setTimeout(() => {
         let baseLayersSwitcher = document.getElementById('m-layerswitcher-panel');
-      baseLayersSwitcher.addEventListener('click', (event) => {
-        let selectedLayer = event.target
-        this.updateSelectedLayer(selectedLayer.getAttribute('data-layer-name'))
-      })
-      },200)    
+        baseLayersSwitcher.addEventListener('click', (event) => {
+          let selectedLayer = event.target
+          this.updateSelectedLayer(selectedLayer.getAttribute('data-layer-name'))
+        })
+      }, 200)
     }
     //añado el listener click de los baseLayers
     this.element.querySelectorAll('div.m-selector-baselayer-layers-content').addEventListener('click', (e) => {
