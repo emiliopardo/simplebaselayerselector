@@ -121,16 +121,8 @@ export default class SimplebaselayerselectorControl extends M.Control {
     if (this.map_.getControls({ 'name': 'scaleline' })) {
       let scaleline = document.getElementsByClassName('m-scaleline')[0];
       scaleline.style.left = '100px';
-      // scaleline.style.bottom = '10px';
+      scaleline.style.bottom = '10px';
       scaleline.style.position = 'absolute';
-      scaleline.style.background = '#ffffff';
-      scaleline.style.paddingLeft = '15px';
-      scaleline.style.paddingRight = '15px';
-      scaleline.style.paddingTop = '3px';
-      scaleline.style.paddingBottom = '3px';
-      scaleline.style.borderRadius = '15px 15px 15px 15px';
-      scaleline.style.boxShadow = '5px 5px 5px rgb(71, 71, 71)';
-      scaleline.style.opacity = '0.7';
     }
   }
 
