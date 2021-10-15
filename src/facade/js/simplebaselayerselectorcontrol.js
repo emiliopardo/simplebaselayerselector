@@ -67,8 +67,8 @@ export default class SimplebaselayerselectorControl extends M.Control {
     html.addEventListener('click', () => {
       if (this.layerSelector.style.display != 'inline-block') {
         this.layerSelector.animate([
-          { width: "0px", height: '0px', offset: 0 },
-          { width: ((this.layers.length * 76) + 10) + 'px', height: '85px', offset: 1 }
+          { width: '0px',  left: '80px',offset: 0 },
+          { width: ((this.layers.length * 76) + 10) + 'px', height: '85px', left:'90px', offset: 1 }
         ], {
           duration: 300,
           easing: 'ease',
@@ -76,9 +76,9 @@ export default class SimplebaselayerselectorControl extends M.Control {
         });
 
         setTimeout(function () {
-          this.divImagenes = document.getElementsByClassName("m-selector-baselayer-layers-content");
+          this.divImagenes = document.getElementsByClassName('m-selector-baselayer-layers-content');
           for (var i = 0; i < this.divImagenes.length; i++) {
-            this.divImagenes[i].style.display = "block";
+            this.divImagenes[i].style.display = 'block';
           }
         }, 200);
         this.layerSelector.style.width = ((this.layers.length * 76) + 10) + 'px';
@@ -87,22 +87,25 @@ export default class SimplebaselayerselectorControl extends M.Control {
 
       } else {
         this.layerSelector.animate([
-          { width: ((this.layers.length * 76) + 10) + 'px', height: '85px', offset: 0 },
-          { width: "0px", height: '0px', offset: 1 }
+          { width: ((this.layers.length * 76) + 10) + 'px', left: '90px', offset: 0 },
+          { width: '0px', left: '80px', offset: 1 }
         ], {
           duration: 300,
           easing: 'ease',
           iterations: 1
         });
+        this.divImagenes = document.getElementsByClassName('m-selector-baselayer-layers-content');
+          for (var i = 0; i < this.divImagenes.length; i++) {
+            this.divImagenes[i].style.display = 'none';
+          }
+          
         setTimeout(function () {
           this.layerSelector = html.querySelector('div#contenedor-baseLayer-layers');
-          this.divImagenes = document.getElementsByClassName("m-selector-baselayer-layers-content");
-          for (var i = 0; i < this.divImagenes.length; i++) {
-            this.divImagenes[i].style.display = "none";
-          }
           this.layerSelector.style.width = '0px';
           this.layerSelector.style.display = 'none';
         }, 200);
+
+
 
       }
     })
@@ -133,9 +136,9 @@ export default class SimplebaselayerselectorControl extends M.Control {
     })
 
     this.layerSelector.addEventListener('mouseleave', () => {
-      this.divImagenes = document.getElementsByClassName("m-selector-baselayer-layers-content");
+      this.divImagenes = document.getElementsByClassName('m-selector-baselayer-layers-content');
       for (var i = 0; i < this.divImagenes.length; i++) {
-        this.divImagenes[i].style.setProperty("display", "none");
+        this.divImagenes[i].style.setProperty('display', 'none');
       }
       this.layerSelector.style.display = 'none';
     })
