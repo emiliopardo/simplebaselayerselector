@@ -67,10 +67,10 @@ export default class SimplebaselayerselectorControl extends M.Control {
     html.addEventListener('click', () => {
       if (this.layerSelector.style.display != 'inline-block') {
         this.layerSelector.animate([
-          { width: '0px',  left: '80px',offset: 0 },
-          { width: ((this.layers.length * 76) + 10) + 'px', height: '85px', left:'90px', offset: 1 }
+          { width: '0px', height: '85px', left: '80px', offset: 0 },
+          { width: ((this.layers.length * 76) + 10) + 'px', height: '85px',left: '90px', offset: 1 }
         ], {
-          duration: 300,
+          duration: 200,
           easing: 'ease',
           iterations: 1
         });
@@ -87,10 +87,10 @@ export default class SimplebaselayerselectorControl extends M.Control {
 
       } else {
         this.layerSelector.animate([
-          { width: ((this.layers.length * 76) + 10) + 'px', left: '90px', offset: 0 },
-          { width: '0px', left: '80px', offset: 1 }
+          { width: ((this.layers.length * 76) + 10) + 'px', height: '85px', left: '90px', offset: 0 },
+          { width: '0px', height: '85px', left: '80px', offset: 1 }
         ], {
-          duration: 300,
+          duration: 200,
           easing: 'ease',
           iterations: 1
         });
@@ -98,14 +98,11 @@ export default class SimplebaselayerselectorControl extends M.Control {
           for (var i = 0; i < this.divImagenes.length; i++) {
             this.divImagenes[i].style.display = 'none';
           }
-          
         setTimeout(function () {
-          this.layerSelector = html.querySelector('div#contenedor-baseLayer-layers');
+          this.layerSelector = html.querySelector('div#contenedor-baseLayer-layers');         
           this.layerSelector.style.width = '0px';
           this.layerSelector.style.display = 'none';
         }, 200);
-
-
 
       }
     })
