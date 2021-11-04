@@ -32,7 +32,11 @@
   width: 77px;
   /* background-color: #ffffff; */
   background-color: #e9e0e0;
-  box-sizing: unset !important;
+  /* box-sizing: initial !important;
+  -webkit-box-sizing: initial !important; */
+
+  box-sizing: border-box !important;
+  -webkit-box-sizing: border-box !important;
 }
 #selectedBaseLayer{
   border: solid 3px #e69942;
