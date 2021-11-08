@@ -30,16 +30,14 @@
   align-items: center;
   height: 77px;
   width: 77px;
-  /* background-color: #ffffff; */
   background-color: #e9e0e0;
-  /* box-sizing: initial !important;
-  -webkit-box-sizing: initial !important; */
-
-  box-sizing: border-box !important;
-  -webkit-box-sizing: border-box !important;
+  box-sizing: content-box !important;
+  -webkit-box-sizing: content-box !important;
 }
 #selectedBaseLayer{
   border: solid 3px #e69942;
+  box-sizing: content-box !important;
+  -webkit-box-sizing: content-box !important;
 }
 
 #contenedor-selector-baselayer:hover {
